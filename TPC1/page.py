@@ -8,11 +8,6 @@ texto_path = 'texto/'
 dirFilesAnt = os.listdir(antigas_path)
 dirFilesAtual = os.listdir(novas_path)
 
-# mudar a extensão das imagens antigas para lower case
-for filename in dirFilesAnt:
-    newFilename = f"{filename.rsplit('.', 1)[0]}.{filename.rsplit('.', 1)[1].lower()}"
-    os.rename(os.path.join(antigas_path, filename), os.path.join(antigas_path, newFilename))
-    
 for nome_arquivo in os.listdir('texto'):
     # iterar por cada arquivo .xml. Para já, obtemos apenas o nome da rua e o número
     if nome_arquivo.endswith('.xml'):
@@ -122,6 +117,8 @@ for nome_arquivo in os.listdir('texto'):
     
     # Criar o html para apresentar as imagens antigas
     for img, legenda in zip(imagens_antigas, legendas):
+        if img not in dirFilesAnt:
+            img = f"{img.rsplit('.', 1)[0]}.{img.rsplit('.', 1)[1].upper()}" #caso em que a extensão está em CAPS 
         conteudo += f"""
             <div class="w3-container w3-teal">
                 <h1>{nome}</h1>
