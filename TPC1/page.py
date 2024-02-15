@@ -4,12 +4,11 @@ from pathlib import Path
 
 antigas_path = 'imagem/'
 novas_path = 'atual/'
-texto_path = 'texto/'
 dirFilesAnt = os.listdir(antigas_path)
 dirFilesAtual = os.listdir(novas_path)
 
 for nome_arquivo in os.listdir('texto'):
-    # iterar por cada arquivo .xml. Para já, obtemos apenas o nome da rua e o número
+    # Iterar por cada arquivo .xml. Para já, obtemos apenas o nome da rua e o número
     if nome_arquivo.endswith('.xml'):
         caminho_arquivo = os.path.join('texto', nome_arquivo)
         parser = etree.XMLParser()
@@ -108,7 +107,7 @@ for nome_arquivo in os.listdir('texto'):
         legenda = figura.find('legenda')
         legendas.append(legenda.text)
     
-    # Pôr as extensões das imagens em lowercase, tal como fizemos em cima
+    # Pôr as extensões das imagens em lowercase
     imagens_antigas = [f"{filename.rsplit('.', 1)[0]}.{filename.rsplit('.', 1)[1].lower()}" for filename in imagens_antigas]
 
     # Obter os caminhos das imagens novas
