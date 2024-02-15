@@ -1,10 +1,20 @@
 import os, re
 from lxml import etree
+from pathlib import Path
 
-dirFiles = os.listdir('atual/')
+antigas_path = 'imagem/'
+novas_path = 'atual/'
+texto_path = 'texto/'
+dirFilesAnt = os.listdir(antigas_path)
+dirFilesAtual = os.listdir(novas_path)
 
+# mudar a extensão das imagens antigas para lower case
+for filename in dirFilesAnt:
+    newFilename = f"{filename.rsplit('.', 1)[0]}.{filename.rsplit('.', 1)[1].lower()}"
+    os.rename(os.path.join(antigas_path, filename), os.path.join(antigas_path, newFilename))
+    
 for nome_arquivo in os.listdir('texto'):
-
+    # iterar por cada arquivo .xml. Para já, obtemos apenas o nome da rua e o número
     if nome_arquivo.endswith('.xml'):
         caminho_arquivo = os.path.join('texto', nome_arquivo)
         parser = etree.XMLParser()
@@ -13,6 +23,7 @@ for nome_arquivo in os.listdir('texto'):
         numero = root.find('.//meta/número').text
         nome = root.find('.//meta/nome').text
 
+    # Criar o ficheiro html
     f = open('html/' + numero + '.html','w+', encoding='utf-8')
 
     preHTML = f"""
@@ -48,69 +59,68 @@ for nome_arquivo in os.listdir('texto'):
 
     conteudo = ""
 
+    # Obter a descrição de cada rua
     for para in root.findall('corpo/para'):
         text = ""
         for part in para.itertext():
             text += part.strip() + " "
         conteudo += "<p>{}</p>".format(text.strip())
-
-    conteudo += "<div class='w3-container'><h2>Lista de Casas</h2><table class='w3-table w3-striped'>"
-    conteudo += "<tr><th>Número</th><th>Enfiteuta</th><th>Foro</th><th>Descrição</th><th>Lugar</th></tr>"
-    for casa in root.findall('corpo/lista-casas/casa'):
-        numero = casa.find('número').text
-        enfiteuta = casa.find('enfiteuta').text if casa.find('enfiteuta') is not None else "---"
-        foro = casa.find('foro').text if casa.find('foro') is not None else "---"
-        desc = ""
-        if casa.find('desc/para') is not None:
-            for part in casa.find('desc/para').itertext():
-                desc += part.strip() + " "
-        else:
-            desc = "---"
-        lugar = ""
-        if casa.find('desc/para/lugar') is not None:
-            lugar = casa.find('desc/para/lugar').text
-        else:
-            lugar = "---"
-
-        conteudo += "<tr>"
-        conteudo += "<td>{}</td>".format(numero)
-        conteudo += "<td>{}</td>".format(enfiteuta)
-        conteudo += "<td>{}</td>".format(foro)
-        conteudo += "<td>{}</td>".format(desc)
-        conteudo += "<td>{}</td>".format(lugar)
-        conteudo += "</tr>"
-        conteudo += "<tr><td colspan='5'><hr></td></tr>"
-
-    conteudo += "</table>"
-
-
-
     
-    '''
-    conteudo += "<h2>Lista de Casas</h2>"
-    conteudo += "<ul>"
-    for casa in root.findall('corpo/lista-casas/casa'):
-        numero = casa.find('número').text
-        enfiteuta = casa.find('enfiteuta').text if casa.find('enfiteuta') is not None else ''
-        foro = casa.find('foro').text if casa.find('foro') is not None else ''
-        conteudo += "<li>Número: {} - Enfiteuta: {} - Foro: {}</li>".format(numero, enfiteuta, foro)
-    conteudo += "</ul>"
-    '''
-    
-    
+    # Obter a lista de casas e dados correspondentes (apenas nos casos em que há uma lista)
+    if len(root.findall('corpo/lista-casas/casa')) != 0:
+        conteudo += f"""
+        <div class='w3-container'>
+            <h2>Lista de Casas</h2>
+                <table class='w3-table w3-striped'>
+                    <tr><th>Número</th><th>Enfiteuta</th><th>Foro</th><th>Descrição</th><th>Lugar</th></tr>
+        """
+        for casa in root.findall('corpo/lista-casas/casa'):
+            nr = casa.find('número').text
+            enfiteuta = casa.find('enfiteuta').text if casa.find('enfiteuta') is not None else "INDISPONÍVEL"
+            foro = casa.find('foro').text if casa.find('foro') is not None else "INDISPONÍVEL"
+            lugar = casa.find('desc/para/lugar').text if casa.find('desc/para/lugar') is not None else "INDISPONÍVEL"
+            desc = ""
+            if casa.find('desc/para') is not None:
+                for part in casa.find('desc/para').itertext():
+                    desc += part.strip() + " "
+            else:
+                desc = "INDISPONÍVEL"
+
+            conteudo += "<tr>"
+            conteudo += "<td>{}</td>".format(nr)
+            conteudo += "<td>{}</td>".format(enfiteuta)
+            conteudo += "<td>{}</td>".format(foro)
+            conteudo += "<td>{}</td>".format(desc)
+            conteudo += "<td>{}</td>".format(lugar)
+            conteudo += "</tr>"
+            conteudo += "<tr><td colspan='5'><hr></td></tr>"
+        conteudo += "</table></div>"
+    else:
+        conteudo += f"""
+        <div class='w3-container'>
+            <h5><b>AVISO: Não existe uma lista de casas para esta rua</b></h5>
+        </div>
+        """
+
     imagens_antigas = []
     imagens_novas = []
-    legendas =[]
+    legendas = []
     
+    # Obter os caminhos das imagens antigas e respetivas legendas presentes no .xml
     for figura in root.findall('corpo/figura'):
         imagem = figura.find('imagem')
-        imagens_antigas.append(imagem.get('path')[3:])
+        imagens_antigas.append(imagem.get('path')[3:]) # retirar o ../
         legenda = figura.find('legenda')
         legendas.append(legenda.text)
-     
-    pattern = rf'^{numero}-.*$'
-    imagens_novas = [file for file in dirFiles if re.match(pattern, file)]
     
+    # Pôr as extensões das imagens em lowercase, tal como fizemos em cima
+    imagens_antigas = [f"{filename.rsplit('.', 1)[0]}.{filename.rsplit('.', 1)[1].lower()}" for filename in imagens_antigas]
+
+    # Obter os caminhos das imagens novas
+    pattern = rf'^{numero}-.*$'
+    imagens_novas = [file for file in dirFilesAtual if re.match(pattern, file)]
+    
+    # Criar o html para apresentar as imagens antigas
     for img, legenda in zip(imagens_antigas, legendas):
         conteudo += f"""
             <div class="w3-container w3-teal">
@@ -120,14 +130,14 @@ for nome_arquivo in os.listdir('texto'):
             <img src="{'../' + img}" alt="{legenda}" style="width:100%">  
         """
 
-    for img, legenda in zip(imagens_novas, legendas):
+    # Criar o html para apresentar as imagens antigas
+    for img in imagens_novas:
         conteudo += f"""
             <div class="w3-container w3-teal">
-                <h1>{"nome"}</h1>
-                <figcaption>{legenda}</figcaption>
+                <h1>{nome}</h1>
             </div>
-            <img src="{'../atual/' + img}" alt="{legenda}" style="width:100%">
+            <img src="{'../atual/' + img}" alt="{"Error showing the image"}" style="width:100%">
         """
-
     f.write(preHTML + conteudo + posHTML)
-print("Files created!")
+
+print("Pages created!")
