@@ -8,7 +8,7 @@ var templates = require('./templates')          // Necessario criar e colocar na
 
 // Aux functions
 function collectRequestBodyData(request, callback) {
-    if(request.headers['content-type'] === 'application/x-www-form-urlencoded') {
+    if (request.headers['content-type'] === 'application/x-www-form-urlencoded') {
         let body = '';
         request.on('data', chunk => {
             body += chunk.toString();
@@ -28,169 +28,289 @@ var compositoresServer = http.createServer((req, res) => {
     console.log(req.method + " " + req.url + " " + d)
 
     var comp_regex = /\/compositores\/C[0-9]{2,3}/
-    var per_regex = /\/periodos\//
-    
+    var comp_por_per_regex = /\/compositores\?periodo=(\w+)/
+    var edit_comp_regex = /\/compositores\/edit\/C[0-9]{2,3}/
     var del_comp_regex = /\/compositores\/delete\/C[0-9]{2,3}/
 
+    var per_regex = /\/periodos\/\w+(?<!edit|delete)/
+    var edit_per_regex = /\/periodos\/edit\/\w+/
+    var del_per_regex = /\/periodos\/delete\/\w+/
+
     // Handling request
-    if(static.staticResource(req)){
+    if (static.staticResource(req)) {
         static.serveStaticResource(req, res)
     }
-    else{
-        switch(req.method){
-            case "GET": 
+    else {
+        switch (req.method) {
+            case "GET":
+                if (req.url == "/") { // pagina principal
+                    fs.readFile('principal.html', function (erro, dados) {
+                        res.writeHead(200, { 'Content-Type': 'text/html' })
+                        res.write(dados)
+                        res.end()
+                    })
+                }
                 // GET /compositores --------------------------------------------------------------------
-                if(req.url == '/compositores'){
+                else if (req.url == '/compositores') {
                     axios.get('http://localhost:3000/compositores')
                         .then(resposta => {
-                            res.writeHead(200, {'Content-Type': 'text/html'})
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
                             res.end(templates.composersListPage(resposta.data, d))
                         })
                         .catch(erro => {
-                            res.writeHead(520, {'Content-Type': 'text/html'})
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
                             res.end(templates.errorPage(erro, d))
                         })
                 }
-                // GET /compositores/id --------------------------------------------------------------------
-                else if(comp_regex.test(req.url)){
+
+                // GET /compositores por periodo --------------------------------------------------------------------
+                else if (comp_por_per_regex.test(req.url)) {
                     axios.get('http://localhost:3000' + req.url)
                         .then(resposta => {
-                            res.writeHead(200, {'Content-Type': 'text/html'})
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
+                            res.end(templates.composersListPage(resposta.data, d))
+                        })
+                        .catch(erro => {
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
+                            res.end(templates.errorPage(erro, d))
+                        })
+                }
+
+                // GET /compositores/id --------------------------------------------------------------------
+                else if (comp_regex.test(req.url)) {
+                    axios.get('http://localhost:3000' + req.url)
+                        .then(resposta => {
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
                             res.end(templates.composerPage(resposta.data, d))
                         })
                         .catch(erro => {
-                            res.writeHead(520, {'Content-Type': 'text/html'})
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
                             res.end(templates.errorPage(erro, d))
                         })
                 }
 
                 // GET /compositores/registo --------------------------------------------------------------------
-                else if(req.url == '/compositores/registo')
-                {
-                    res.writeHead(200, {'Content-Type': 'text/html'})
+                else if (req.url == '/compositores/registo') {
+                    console.log("entrei aqui")
+                    res.writeHead(200, { 'Content-Type': 'text/html' })
                     res.end(templates.composerFormPage(d))
                 }
 
+                // GET /periodos/registo --------------------------------------------------------------------
+                else if (req.url == '/periodos/registo') {
+                    res.writeHead(200, { 'Content-Type': 'text/html' })
+                    res.end(templates.periodoFormPage(d))
+                }
+
                 // GET /periodos --------------------------------------------------------------------
-                else if(req.url == '/periodos'){
+                else if (req.url == '/periodos') {
+                    console.log("11111")
                     axios.get('http://localhost:3000/periodos')
                         .then(resposta => {
-                            res.writeHead(200, {'Content-Type': 'text/html'})
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
                             res.end(templates.periodosListPage(resposta.data, d))
                         })
                         .catch(erro => {
-                            res.writeHead(520, {'Content-Type': 'text/html'})
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
                             res.end(templates.errorPage(erro, d))
                         })
                 }
-                // GET /periodos/id --------------------------------------------------------------------
-                else if(per_regex.test(req.url)){
-                    axios.get('http://localhost:3000' + req.url)
+
+                // GET /compositores/edit/:id --------------------------------------------------------------------
+                else if (edit_comp_regex.test(req.url)) {
+                    var partes = req.url.split('/')
+                    idCompositor = partes[partes.length - 1] // partes(3) 
+                    axios.get('http://localhost:3000/compositores/' + idCompositor)
                         .then(resposta => {
-                            res.writeHead(200, {'Content-Type': 'text/html'})
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
+                            res.end(templates.composerFormEditPage(resposta.data, d))
+                        })
+                        .catch(erro => {
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
+                            res.end(templates.errorPage(erro, d))
+                        })
+                }
+                // GET /periodos/edit/:id --------------------------------------------------------------------
+                else if (edit_per_regex.test(req.url)) {
+                    console.log("33333")
+                    var partes = req.url.split('/')
+                    idPeriodo = partes[partes.length - 1] // partes(3) 
+                    axios.get('http://localhost:3000/periodos/' + idPeriodo)
+                        .then(resposta => {
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
+                            res.end(templates.periodoFormEditPage(resposta.data, d))
+                        })
+                        .catch(erro => {
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
+                            res.end(templates.errorPage(erro, d))
+                        })
+                }
+
+                // GET /composer/delete/:id --------------------------------------------------------------------
+                else if (del_comp_regex.test(req.url)) {
+                    var partes = req.url.split('/')
+                    idComp = partes[partes.length - 1] // partes(3) 
+                    axios.delete('http://localhost:3000/compositores/' + idComp)
+                        .then(resposta => {
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
+                            res.end(templates.composerPage(resposta.data, d))
+                        })
+                        .catch(erro => {
+                            res.writeHead(521, { 'Content-Type': 'text/html' })
+                            res.end(templates.errorPage(erro, d))
+                        })
+                }
+
+                // GET /periodos/delete/:id --------------------------------------------------------------------
+                else if (del_per_regex.test(req.url)) {
+                    console.log("44444")
+                    var partes = req.url.split('/')
+                    idPeriodo = partes[partes.length - 1] // partes(3) 
+                    axios.delete('http://localhost:3000/periodos/' + idPeriodo)
+                        .then(resposta => {
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
                             res.end(templates.periodoPage(resposta.data, d))
                         })
                         .catch(erro => {
-                            res.writeHead(520, {'Content-Type': 'text/html'})
+                            res.writeHead(521, { 'Content-Type': 'text/html' })
                             res.end(templates.errorPage(erro, d))
                         })
                 }
 
-                /* 
-                // GET /periodos/registo --------------------------------------------------------------------
-                else if(req.url == '/peridoos/registo')
-                {
-                    res.writeHead(200, {'Content-Type': 'text/html'})
-                    res.end(templates.periodoFormPage(d))
+                // GET /periodos/id --------------------------------------------------------------------
+                else if (per_regex.test(req.url)) {
+                    console.log("22222")
+                    axios.get('http://localhost:3000' + req.url)
+                        .then(resposta => {
+                            res.writeHead(200, { 'Content-Type': 'text/html' })
+                            res.end(templates.periodoPage(resposta.data, d))
+                        })
+                        .catch(erro => {
+                            res.writeHead(520, { 'Content-Type': 'text/html' })
+                            res.end(templates.errorPage(erro, d))
+                        })
                 }
-                */
 
                 // GET ? -> Lancar um erro
-                else{
-                    res.writeHead(404, {'Content-Type': 'text/html'})
+                else {
+                    res.writeHead(404, { 'Content-Type': 'text/html' })
                     res.end(templates.errorPage(req.url, d))
                 }
                 break
-            
 
-
-
-
-
-
-            
             case "POST":
-                // POST /compositores/registo --------------------------------------------------------------------
-                if(req.url == '/compositores/registo'){
+                if (req.url == '/compositores/registo') {
+                    console.log("Handling POST to /compositores/registo");
                     collectRequestBodyData(req, result => {
-                        if(result){
+                        if (result) {
                             axios.post('http://localhost:3000/compositores', result)
+                                .then(response => {
+                                    console.log("Successfully registered composer");
+                                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                                    res.end(templates.composerPage(response.data, d));
+                                })
+                                .catch(error => {
+                                    console.error("Error registering composer", error);
+                                    res.writeHead(520, { 'Content-Type': 'text/html' });
+                                    res.end(templates.errorPage(error, d));
+                                });
+                        } else {
+                            console.log("No data to register composer");
+                            res.writeHead(500, { 'Content-Type': 'text/html;charset=utf-8' });
+                            res.end("<p>Unable to collect data from body...</p>");
+                        }
+                    });
+                    return; // Important to prevent any further execution that might inadvertently send another response
+                }
+                
+
+                // POST /periodos/registo --------------------------------------------------------------------
+                if (req.url == '/periodos/registo') {
+                    console.log("55555")
+                    collectRequestBodyData(req, result => {
+                        if (result) {
+                            axios.post('http://localhost:3000/periodos', result)
                                 .then(resposta => {
-                                    res.writeHead(200, {'Content-Type': 'text/html'})
-                                    res.end(templates.composerPage(resposta.data, d))
+                                    res.writeHead(200, { 'Content-Type': 'text/html' })
+                                    res.end(templates.periodoPage(resposta.data, d))
                                 })
                                 .catch(erro => {
-                                    res.writeHead(520, {'Content-Type': 'text/html'})
+                                    res.writeHead(520, { 'Content-Type': 'text/html' })
                                     res.end(templates.errorPage(erro, d))
                                 })
                         }
-                        else{
-                            res.writeHead(500, {'Content-Type': 'text/html;charset=utf-8'})
+                        else {
+                            res.writeHead(500, { 'Content-Type': 'text/html;charset=utf-8' })
                             res.write("<p>Unable to colect data from body...</p>")
                             res.end()
                         }
                     })
                 }
 
-            
-                // POST /alunos/edit/:id --------------------------------------------------------------------
+
+                // POST /compositores/edit/:id --------------------------------------------------------------------
+                else if (edit_comp_regex.test(req.url)) {
+                    var partes = req.url.split('/')
+                    idCompositor = partes[partes.length - 1] // partes(3) 
+                    collectRequestBodyData(req, result => {
+                        if (result) {
+                            axios.put('http://localhost:3000/compositores/' + idCompositor, result)
+                                .then(resposta => {
+                                    res.writeHead(200, { 'Content-Type': 'text/html' })
+                                    res.end(templates.composerPage(resposta.data, d))
+                                })
+                                .catch(erro => {
+                                    res.writeHead(520, { 'Content-Type': 'text/html' })
+                                    res.end(templates.errorPage(erro, d))
+                                })
+                        }
+                        else {
+                            res.writeHead(500, { 'Content-Type': 'text/html;charset=utf-8' })
+                            res.write("<p>Unable to colect data from body...</p>")
+                            res.end()
+                        }
+                    })
+                }
+
+                // POST /periodos/edit/:id --------------------------------------------------------------------
+                else if (edit_per_regex.test(req.url)) {
+                    console.log("666666")
+                    var partes = req.url.split('/')
+                    idPeriodo = partes[partes.length - 1] // partes(3) 
+                    collectRequestBodyData(req, result => {
+                        if (result) {
+                            axios.put('http://localhost:3000/periodos/' + idPeriodo, result)
+                                .then(resposta => {
+                                    res.writeHead(200, { 'Content-Type': 'text/html' })
+                                    res.end(templates.periodoPage(resposta.data, d))
+                                })
+                                .catch(erro => {
+                                    res.writeHead(520, { 'Content-Type': 'text/html' })
+                                    res.end(templates.errorPage(erro, d))
+                                })
+                        }
+                        else {
+                            res.writeHead(500, { 'Content-Type': 'text/html;charset=utf-8' })
+                            res.write("<p>Unable to colect data from body...</p>")
+                            res.end()
+                        }
+                    })
+                }
+
 
                 // POST ? -> Lancar um erro
-                else{
-                    res.writeHead(404, {'Content-Type': 'text/html'})
+                else {
+                    res.writeHead(404, { 'Content-Type': 'text/html' })
                     res.end(templates.errorPage(`Pedido POST não suportado: ${req.url}`, d))
                 }
                 break
 
-            
-            
-            case "DELETE":
-                // DELETE /compositores/delete/id --------------------------------------------------------------------
-                if(del_comp_regex.test(req.url)){
-                    console.log("here")
-                    collectRequestBodyData(req, result => {
-                        if(result){
-                            axios.delete('http://localhost:3000/instrumentos/I23', result)
-                                .then(resp => {
-                                    console.log(resp.data);
-                            }).
-                            catch(error => {
-                                console.log(error);
-                            });
-                            }
-                        else{
-                            res.writeHead(500, {'Content-Type': 'text/html;charset=utf-8'})
-                            res.write("<p>Unable to colect data from body...</p>")
-                            res.end()
-                        }
-                    })
-                }
-
-
-
-
-
-
-
-
-
-                
-            default: 
-                // Outros metodos nao sao suportados
+            default:
+            // Outros metodos nao sao suportados
         }
     }
 })
 
-compositoresServer.listen(7777, ()=>{
+compositoresServer.listen(7777, () => {
     console.log("Servidor à escuta na porta 7777...")
 })
