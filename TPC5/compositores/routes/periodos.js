@@ -46,8 +46,20 @@ router.get('/delete/:id', function(req, res, next) {
       .catch(erro => {
         res.render('error', {error: erro, message: "Erro ao recuperar o período"})
       })
-  });
-  
+});
+
+// GET /periodos/edit/:id --------------------------------------------------------------------
+router.get('/edit/:id', function(req, res, next) {
+  var d = new Date().toISOString().substring(0, 16)
+  axios.get('http://localhost:3000/periodos/' + req.params.id)
+      .then(resposta => {
+          res.render('editPeriodo', {periodo: resposta.data, data: d, titulo: "Edit de periodo"})
+      })
+      .catch(erro => {
+          res.render('error', {error: erro, message: "Erro ao editar1 o periodo"})
+      })
+});
+
   
 
 
@@ -65,6 +77,19 @@ router.post('/registo', function(req,res){
       res.render('error', {error: erro, message: "Erro ao gravar um periodo novo"})
     })
   })
+
+// POST /periodos/edit/:id --------------------------------------------------------------------
+router.post('/edit/:id', function(req,res){
+  var d = new Date().toISOString().substring(0, 16)
+  console.log(JSON.stringify(req.body))
+  axios.put('http://localhost:3000/periodos/' + req.params.id, req.body)
+  .then(resposta => {
+    res.render('confirmEdit', {info: req.body, data: d, titulo: "Edit de periodo com Sucesso"})
+  })
+  .catch(erro => {
+    res.render('error', {error: erro, message: "Erro ao editar2 o periodo"})
+  })
+});
   
   module.exports = router;
   

@@ -2,16 +2,16 @@
   "compositores": [
     {
       "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
+      "nome": "Andrea Falconieri",
+      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em\n         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
       "dataNasc": "1585",
       "dataObito": "1656",
       "periodo": "Renascimento"
     },
     {
       "id": "C242",
-      "nome": "Anerio, Felice PRIMO",
-      "bio": "Felice Anerio (Narni, 1560 – Roma, 26 ou 27 de setembro de 1614) foi um compositor italiano do final da Renascença e início do Barroco, e         membro da Escola romana de compositores. Foi o irmão mais velho de outro importante, e um pouco mais progressista compositor do mesmo         período, Giovanni Francesco Anerio.",
+      "nome": "Anerio, Felice",
+      "bio": "Felice Anerio (Narni, 1560 – Roma, 26 ou 27 de setembro de 1614) foi um compositor italiano do final da Renascença e início do Barroco, e\n         membro da Escola romana de compositores. Foi o irmão mais velho de outro importante, e um pouco mais progressista compositor do mesmo\n         período, Giovanni Francesco Anerio.",
       "dataNasc": "1560",
       "dataObito": "1614",
       "periodo": "Renascimento"
@@ -1303,62 +1303,6 @@
       "dataNasc": "1663-11-14",
       "dataObito": "1712-08-07",
       "periodo": "Barroco"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri VASCO (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri dsa",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
-    },
-    {
-      "id": "C192",
-      "nome": "Andrea Falconieri VASCO",
-      "bio": "Andrea Falconieri (Nápoles, 1585 or 1586 - ?, 1656), também conhecido como Falconiero, foi um compositor e alaudista italiano.Viveu em         Parma de 1604 a 1614, depois em Roma e finalmente voltou a Nápoles, onde, em 1647, tornou-se maestro di cappella da capela real.",
-      "dataNasc": "1585",
-      "dataObito": "1656",
-      "periodo": "Renascimento"
     }
   ],
   "periodos": [
