@@ -30,7 +30,7 @@ router.get('/:id', function(req, res, next) {
     res.render('compositor', {compositor : resposta.data, data: d, titulo: "Consulta de compositor"})
   })
   .catch(erro => {
-    res.render('error', {error: erro, message: "Erro ao recuperar o compositor"})
+    res.render('error', {error: erro, message: "Erro ao recuperar1 o compositor"})
   })
 });
 
@@ -44,6 +44,18 @@ router.get('/delete/:id', function(req, res, next) {
     .catch(erro => {
       res.render('error', {error: erro, message: "Erro ao recuperar o compositor"})
     })
+});
+
+// GET /compositores/edit/:id --------------------------------------------------------------------
+router.get('/edit/:id', function(req, res, next) {
+  var d = new Date().toISOString().substring(0, 16)
+  axios.get('http://localhost:3000/compositores/' + req.params.id)
+      .then(resposta => {
+          res.render('editCompositor', {compositor: resposta.data, data: d, titulo: "Edit de compositor"})
+      })
+      .catch(erro => {
+          res.render('error', {error: erro, message: "Erro ao editar1 o compositor"})
+      })
 });
 
 /* ---------- POST ----------*/
@@ -60,5 +72,19 @@ router.post('/registo', function(req,res){
     res.render('error', {error: erro, message: "Erro ao gravar um compositor novo"})
   })
 })
+
+// POST /compositores/edit/:id --------------------------------------------------------------------
+router.post('/edit/:id', function(req,res){
+  console.log("aqui???")
+  var d = new Date().toISOString().substring(0, 16)
+  console.log(JSON.stringify(req.body))
+  axios.put('http://localhost:3000/compositores/' + req.params.id, req.body)
+  .then(resposta => {
+    res.render('confirmEdit', {info: req.body, data: d, titulo: "Edit de compositor com Sucesso"})
+  })
+  .catch(erro => {
+    res.render('error', {error: erro, message: "Erro ao editar2 o compositor"})
+  })
+});
 
 module.exports = router;
