@@ -2,8 +2,8 @@
 ## 2024-03-04
 	
 ## Autor:
-- A96351
-- Luís Alberto Barreiro Araújo
+- A96357
+- Luís Tiago Pereira Borges
 	
 ## Resumo
 	
