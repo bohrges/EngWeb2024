@@ -7,4 +7,6 @@ Aqui serão armazenados todos os trabalhos da Unidade Curricular de Engenharia W
 
 - **Nome:** Luís Tiago Pereira Borges
 - **ID:** a96357
-- **Foto:** ![Fotografia do aluno](pic.jpg)
+- **Foto:**
+
+![Fotografia do aluno](pic.jpg)
